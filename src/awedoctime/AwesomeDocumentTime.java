@@ -16,7 +16,9 @@ public class AwesomeDocumentTime {
      * @return a new empty document
      */
     public static Document empty() {
-        throw new UnsupportedOperationException("empty() unimplemented");
+        //throw new UnsupportedOperationException("empty() unimplemented");
+        
+        return new Page(new Paragraph("empty document"));
     }
     
     /**
@@ -26,7 +28,9 @@ public class AwesomeDocumentTime {
      * @return a new paragraph
      */
     public static Document paragraph(String text) {
-        throw new UnsupportedOperationException("paragraph(..) unimplemented");
+        //throw new UnsupportedOperationException("paragraph(..) unimplemented");
+        
+        return new Paragraph(text);
     }
     
     /**
@@ -37,6 +41,8 @@ public class AwesomeDocumentTime {
      * @return a new section
      */
     public static Document section(String heading, Document contents) {
-        throw new UnsupportedOperationException("section(..) unimplemented");
+        //throw new UnsupportedOperationException("section(..) unimplemented");
+        
+        return new Section(heading, contents);
     }
 }

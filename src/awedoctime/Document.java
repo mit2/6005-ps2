@@ -44,6 +44,14 @@ public interface Document {
      *        "1 paragraph", or "N paragraphs" for N != 1
      * <br> For an example, see the problem set handout.
      * @return table of contents
+     * MY NOTE: Ex: 1. Section heading1
+     * 
+     *              1.1 Nested Section heading1.1
+     *                  2 paragraphs
+     *              
+     *              2. Section heading2
+     *                  1 paragraphs
+     *                  
      */
     public Document tableOfContents();
     
@@ -66,6 +74,8 @@ public interface Document {
      * <br> For an example, see the problem set handout.
      * @return Markdown conversion
      * @throws ConversionException if the document cannot be converted
+     * MyNote:  https://learn.getgrav.org/content/markdown
+     *          https://en.wikipedia.org/wiki/Markdown
      */
     public String toMarkdown() throws ConversionException;
     
