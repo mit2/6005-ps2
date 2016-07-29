@@ -30,10 +30,25 @@ public class Section implements Document{
      * @param e section content as other sections or paragraphs
      */
     public Section(String title, Document e){
+        if(title.isEmpty())throw new AssertionError(title);
         header = title;
         content.add(e);
         
     }
+    
+    // Adding 2 more paragraphs for toString() testing only
+    public void addTestParagraphs(){
+        content.add(new Paragraph("Testing2 test test"));
+        content.add(new Paragraph("Testing3 test test"));
+    }
+    
+    
+    
+    // Adding 1 SubSection for toString() testing only
+    public void addTestSubSection(){
+        content.add(new Section("Subsection header", new Paragraph("Testing Subseciton paragraph")));
+    }
+    
 
     /**
      *  Checking Rep Invariant
@@ -80,10 +95,20 @@ public class Section implements Document{
     }
     
     /**
-     * Returns a concise String representation of the document.
+     * Returns a concise String representation of the Document Section as a Section header and shortcut
+     * collection of paragraphs. 
+     * Required section header to be not empty.
+     * @return section summary as single character string.
      */
     @Override public String toString(){
-        return header; // header + paragph1/2 + parg2/2 + ETC... do concat of strings to repres shortcat of Section.
+        String summary = header + "\n";        
+        for (Document e : content) {
+            if(e instanceof Section) summary += "\t";
+            summary = summary.concat(e.toString());
+            
+        }
+        
+        return summary; 
     }
 
 }

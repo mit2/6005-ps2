@@ -29,7 +29,8 @@ public class Page implements Document{
      */
     public Page(Document e){                 // null was an easy option to create an empty Document, but null params is better avoid for NullPointerExeption to be raised.
         content = new ArrayList<Document>(); // init empty document Page without content.
-        if(!e.toString().contains("empty document")) content.add(e); // if content don't contain 'empty page' mark, add content to create regular Page.
+        if(!e.toString().contains("Empty document")) content.add(e); // if content don't contain 'empty page' mark, add content to create regular Page.
+        
     }
     
     /**
@@ -43,7 +44,13 @@ public class Page implements Document{
         Assert.assertTrue(content.size() >= 0); 
     }
 
-    
+
+    // Adding 2 more paragraphs for toString() testing only, b/c of append() absent implementation...
+    public void addParagraphs(){
+        content.add(new Paragraph("Testing2 test test"));
+        content.add(new Paragraph("Testing3 test test"));
+    }
+   
     
     // Implement Required Document Interface
     @Override
@@ -74,6 +81,22 @@ public class Page implements Document{
     public String toMarkdown() throws ConversionException {
         // TODO Auto-generated method stub
         return null;
+    }
+    
+    /**
+     * Returns a concise String representation of the Document Page as a shortcut
+     * collection of paragraphs and sections.
+     * @return page summary as single character string.
+     */
+    @Override public String toString(){
+        System.out.println("PAGE CONCISE CONTENT: \n------------------------------------------------");
+        String summary = "";       
+        for (Document e : content) {
+           summary = summary.concat(e.toString());          
+        }
+        if(summary.isEmpty()) System.out.println("Empty Document!");
+        //System.out.println(summary);
+        return summary;
     }
 
 }

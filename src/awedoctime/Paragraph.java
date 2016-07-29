@@ -71,10 +71,14 @@ public class Paragraph implements Document{
     }
     
     /**
-     * Returns a concise String representation of the document.
+     * Returns a concise String representation of the Paragraph.
+     * @return paragraphs summary as single character string.
      */
     @Override public String toString(){
-        return content.substring(0, content.length()/2);
+        if(!content.isEmpty())
+            return content.substring(0, content.length()/2) + "...\n";
+        else
+            return content;
     }
 
 }
