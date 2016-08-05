@@ -121,5 +121,123 @@ public class DocumentTest {
         assertEquals("Section Header\ntest te...\n\tSubsection header\nTesting Subsec...\nTesting2 ...\nTesting3 ...\n", pg.toString());
     }
     
+    /** equals() & hashCode() tests for Document elements. */
+    // equal() tests
+    // PARAGRAPH
+    @Test public void testParagraphEqual_SameTypeObjects_Empty(){
+        Paragraph p1 = new Paragraph("");
+        Paragraph p2 = new Paragraph("");
+        assertNotNull(p1);
+        assertNotNull(p2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(p2.equals(p2));  // reflexive
+        assertTrue(p1.equals(p2));  // symmetry
+        assertTrue(p2.equals(p1));
+    }
+    
+    @Test public void testParagraphEqual_SameTypeObjects_EqualContent(){
+        Paragraph p1 = new Paragraph("test");
+        Paragraph p2 = new Paragraph("test");
+        assertNotNull(p1);
+        assertNotNull(p2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(p2.equals(p2));  // reflexive
+        assertTrue(p1.equals(p2));  // symmetry
+        assertTrue(p2.equals(p1));
+    }
+    
+    @Test public void testParagraphEqual_SameTypeObjects_DiffContent(){
+        Paragraph p1 = new Paragraph("test1");
+        Paragraph p2 = new Paragraph("test2");
+        assertNotNull(p1);
+        assertNotNull(p2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(p2.equals(p2));  // reflexive
+        assertFalse(p1.equals(p2));  // symmetry
+        assertFalse(p2.equals(p1));
+    }
+    
+    @Test public void testParagraphEqual_DiffTypeObjects(){
+        Paragraph p1 = new Paragraph("test1");
+        Object o2 = new Object();
+        assertNotNull(p1);
+        assertNotNull(o2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(o2.equals(o2));  // reflexive
+        assertFalse(p1.equals(o2));  // symmetry
+        assertFalse(o2.equals(p1));
+    }
+    // SECTION    
+    @Test public void testSectionEqual_SameTypeObjects_EqualContent(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        Section s2 = new Section("Test1", new Paragraph("test"));
+        assertNotNull(s1);
+        assertNotNull(s2);
+        assertTrue(s1.equals(s1));  // reflexive
+        assertTrue(s2.equals(s2));  // reflexive
+        assertTrue(s1.equals(s2));  // symmetry
+        assertTrue(s2.equals(s2));
+    }
+    
+    @Test public void testSectionEqual_SameTypeObjects_DiffContent(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        Section s2 = new Section("Test2", new Paragraph("test2"));
+        assertNotNull(s1);
+        assertNotNull(s2);
+        assertTrue(s1.equals(s1));  // reflexive
+        assertTrue(s2.equals(s2));  // reflexive
+        assertFalse(s1.equals(s2));  // symmetry
+        assertFalse(s2.equals(s1));
+    }
+    
+    @Test public void testSectionEqual_DiffTypeObjects(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        Object o2 = new Object();
+        assertNotNull(s1);
+        assertNotNull(o2);
+        assertTrue(s1.equals(s1));  // reflexive
+        assertTrue(o2.equals(o2));  // reflexive
+        assertFalse(s1.equals(o2));  // symmetry
+        assertFalse(o2.equals(s1));
+    }
+    
+    
+    // hashCode() tests
+    // PARAGRAPH
+    @Test public void testParagraphHashCode_SameObjects(){
+        Paragraph p1 = new Paragraph("test");
+        Paragraph p2 = new Paragraph("test");
+        assertEquals(p1.hashCode(), p2.hashCode());
+      
+    }
+    
+    @Test public void testParagraphHashCode_DiffObjects(){
+        Paragraph p1 = new Paragraph("test1");
+        Paragraph p2 = new Paragraph("test2");
+        assertNotEquals(p1.hashCode(), p2.hashCode());
+      
+    }
+    
+    // SECTION
+    @Test public void testSectionHashCode_SameObjects(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        Section s2 = new Section("Test1", new Paragraph("test"));
+        assertEquals(s1.hashCode(), s2.hashCode());
+    }
+    
+    @Test public void testSectionHashCode_DiffObjects(){
+        Section s1 = new Section("Test1", new Paragraph("test1"));
+        Section s2 = new Section("Test2", new Paragraph("test2"));
+        assertNotEquals(s1.hashCode(), s2.hashCode());
+    }
+    
+     @Test public void testSectionHashCode_SameObjects_NestedSection(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        s1.addTestSubSection();
+        Section s2 = new Section("Test1", new Paragraph("test"));
+        s2.addTestSubSection();
+        assertEquals(s1.hashCode(), s2.hashCode());
+    }
+    
     
 }

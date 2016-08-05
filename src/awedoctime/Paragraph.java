@@ -38,6 +38,33 @@ public class Paragraph implements Document{
         Assert.assertTrue(content.length() > 0);
     }
     
+    // Implement Object  observational equality, as this ADT is immutable.
+    /**
+     * Compares this Paragraph to the specified object. The result is true if and only if the argument is
+     * not null and is a Paragraph object that represents the same sequence of characters as this object.
+     * @overrides equals in Class Object
+     * @param thatObj the object to compare this paragraph against.
+     * @return true if the given object represents a Paragraph equivalent to this paragraph, false otherwise,
+     * for a non-null reference x, x.equals (null) should return false;
+     */
+    @Override public boolean equals(Object thatObj) {
+        if(thatObj == null)return false; // checking client's input for precondition violation, throw new AssertionError(obj)
+        if(!(thatObj instanceof Paragraph))
+            return false;
+        else{
+            Paragraph thatParagraph = (Paragraph)thatObj;
+            return this.hashCode() == thatParagraph.hashCode();       
+        }        
+    }
+    
+    /**
+     * Before implement equals implement hashCode() as it's important for hash-table handling.
+     * Returns hash code for this paragraph content, using Build-in Java String Object hashCode() values.
+     * (The hash value of the empty string is zero.)
+     */
+    @Override public int hashCode(){
+        return content.hashCode();
+    }
     
     // Implement Required Document Interface
     @Override

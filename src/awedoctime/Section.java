@@ -62,6 +62,41 @@ public class Section implements Document{
         Assert.assertTrue(content.size() > 0);
     }
     
+ // Implement Object  observational equality, as this ADT is immutable.
+    /**
+     * Compares this Section to the specified object. The result is true if and only if the argument is
+     * not null and is a Section object that represents the same sequence of the same Document elements as this object.
+     * @overrides equals in Class Object
+     * @param thatObj the object to compare this section against.
+     * @return true if the given object represents a Section equivalent to this section, false otherwise,
+     * for a non-null reference x, x.equals (null) should return false;
+     */
+    @Override public boolean equals(Object thatObj) {
+        if(thatObj == null)return false; // checking client's input for precondition violation, throw new AssertionError(obj)
+        if(!(thatObj instanceof Section))
+            return false;
+        else{
+            Section thatSection = (Section)thatObj;
+            return this.hashCode() == thatSection.hashCode();       
+        }        
+    }
+    
+    /**
+     * Before implement equals implement hashCode() as it's important for hash-table handling.
+     * Returns hash code for this section content, using Build-in Java String Object hashCode() values.
+     * (The hash value of the empty string is zero.)
+     */
+    @Override public int hashCode(){
+        // RECURSIVE IMPLEMENTATION
+        // Overall strategy for this hashCode algm is: 
+        //hashStrOfDigitsValue = headerHashVlaue + p1.hashCode + p2.hashCode.. + pn.hashCode
+        //hashStrOfDigitsValue.hashCode() to int
+        String hash = "" + header.hashCode();
+        for (Document e : content) {
+            hash += e.hashCode();   // in case if e is instanceof Section calls recursively this hashCode() again
+        }
+        return hash.hashCode();
+    }
     
     // Implement Required Document Interface
     @Override
