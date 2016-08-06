@@ -12,6 +12,8 @@ import org.junit.Assert;
  * 
  * Page Class design is consistent with AwersomeDocumentTime static creation methods.
  * @author win8
+ * 
+ * LESSON IS TAKEN: ALWAYS BUILD 1ST SMALLER ADT "ELEMENTS"... AS FUTURE IMPLEMENTATIONS DEPENDS ON IT.
  *
  */
 public class Page implements Document{
@@ -44,9 +46,47 @@ public class Page implements Document{
         Assert.assertTrue(content.size() >= 0); 
     }
 
-
+ // Implement Object  observational equality, as this ADT is immutable.
+    /**
+     * Compares this Page to the specified object. The result is true if and only if the argument is
+     * not null and is a Page object that represents the same sequence of the same Document elements as this object.
+     * @overrides equals in Class Object
+     * @param thatObj the object to compare this page against.
+     * @return true if the given object represents a Page equivalent to this section, false otherwise,
+     * for a non-null reference x, x.equals (null) should return false;
+     */
+    @Override public boolean equals(Object thatObj) {
+        if(thatObj == null)return false; // checking client's input for precondition violation, throw new AssertionError(obj)
+        if(!(thatObj instanceof Page))
+            return false;
+        else{
+            Page thatPage = (Page)thatObj;
+            return this.hashCode() == thatPage.hashCode();       
+        }        
+    }
+    
+    /**
+     * Before implement equals implement hashCode() as it's important for hash-table handling.
+     * Returns hash code for this Page content.
+     * 
+     */
+    @Override public int hashCode(){
+        // RECURSIVE IMPLEMENTATION
+        // Overall strategy for this hashCode algm is: 
+        //hashStrOfDigitsValue = e1.hashCode + e2.hashCode.. + eN.hashCode
+        //hashStrOfDigitsValue.hashCode() to int
+        String hash = "";
+        for (Document e : content) {
+            hash += e.hashCode();   // in case if e is instanceof Page calls recursively this hashCode() again. Also if considering 
+                                    // that all Documents variants is the variants of the same type -- means recursively calling on 'it-self'
+                                    // hashCode()...
+        }
+        return hash.hashCode();
+    }
+    
+    
     // Adding 2 more paragraphs for toString() testing only, b/c of append() absent implementation...
-    public void addParagraphs(){
+    public void addTestParagraphs(){
         content.add(new Paragraph("Testing2 test test"));
         content.add(new Paragraph("Testing3 test test"));
     }

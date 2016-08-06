@@ -106,7 +106,7 @@ public class DocumentTest {
     
     @Test public void testToStringPage_MultipleElements(){
         Page pg = new Page(new Section("Section Header", new Paragraph("test test test")));
-        pg.addParagraphs();
+        pg.addTestParagraphs();
         assertNotNull(pg);
         assertEquals("Section Header\ntest te...\nTesting2 ...\nTesting3 ...\n", pg.toString());
     }
@@ -116,7 +116,7 @@ public class DocumentTest {
         s.addTestSubSection();
         
         Page pg = new Page(s);
-        pg.addParagraphs();
+        pg.addTestParagraphs();
         assertNotNull(pg);
         assertEquals("Section Header\ntest te...\n\tSubsection header\nTesting Subsec...\nTesting2 ...\nTesting3 ...\n", pg.toString());
     }
@@ -176,7 +176,7 @@ public class DocumentTest {
         assertTrue(s1.equals(s1));  // reflexive
         assertTrue(s2.equals(s2));  // reflexive
         assertTrue(s1.equals(s2));  // symmetry
-        assertTrue(s2.equals(s2));
+        assertTrue(s2.equals(s1));
     }
     
     @Test public void testSectionEqual_SameTypeObjects_DiffContent(){
@@ -199,6 +199,55 @@ public class DocumentTest {
         assertTrue(o2.equals(o2));  // reflexive
         assertFalse(s1.equals(o2));  // symmetry
         assertFalse(o2.equals(s1));
+    }
+    // PAGE
+    @Test public void testPageEqual_SameTypeObjects_EqualContent(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        s1.addTestSubSection();
+        Section s2 = new Section("Test1", new Paragraph("test"));
+        s2.addTestSubSection();
+        
+        Page p1 = new Page(s1);
+        Page p2 = new Page(s2);
+        p1.addTestParagraphs();
+        p2.addTestParagraphs();
+        
+        assertNotNull(p1);
+        assertNotNull(p2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(p2.equals(p2));  // reflexive
+        assertTrue(p1.equals(p2));  // symmetry
+        assertTrue(p2.equals(p1));
+    }
+    
+    @Test public void testPageEqual_SameTypeObjects_DiffContent(){
+        Section s1 = new Section("Test1", new Paragraph("test"));
+        s1.addTestSubSection();
+        Section s2 = new Section("Test2", new Paragraph("test2"));
+        s2.addTestSubSection();
+        
+        Page p1 = new Page(s1);
+        Page p2 = new Page(s2);
+        p1.addTestParagraphs();
+        p2.addTestParagraphs();
+        
+        assertNotNull(s1);
+        assertNotNull(s2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(p2.equals(p2));  // reflexive
+        assertFalse(p1.equals(p2));  // symmetry
+        assertFalse(p2.equals(p1));
+    }
+    
+    @Test public void testPageEqual_DiffTypeObjects(){
+        Page p1 = new Page(new Paragraph("test"));
+        Object o2 = new Object();
+        assertNotNull(p1);
+        assertNotNull(o2);
+        assertTrue(p1.equals(p1));  // reflexive
+        assertTrue(o2.equals(o2));  // reflexive
+        assertFalse(p1.equals(o2));  // symmetry
+        assertFalse(o2.equals(p1));
     }
     
     
@@ -238,6 +287,37 @@ public class DocumentTest {
         s2.addTestSubSection();
         assertEquals(s1.hashCode(), s2.hashCode());
     }
-    
+     
+    // PAGE
+     @Test public void testPageHashCode_SameObjects(){
+         Page p1 = new Page(new Paragraph("test"));
+         Page p2 = new Page(new Paragraph("test"));
+         p1.addTestParagraphs();
+         p2.addTestParagraphs();
+        
+         assertEquals(p1.hashCode(), p2.hashCode());
+     }
+     
+     @Test public void testPageHashCode_DiffObjects(){
+         Page p1 = new Page(new Paragraph("test1"));
+         Page p2 = new Page(new Paragraph("test2"));
+         p1.addTestParagraphs();
+         p2.addTestParagraphs();
+         assertNotEquals(p1.hashCode(), p2.hashCode());
+     }
+     
+      @Test public void testPageHashCode_SameObjects_NestedSection(){
+          Section s1 = new Section("Test1", new Paragraph("test"));
+          s1.addTestSubSection();
+          Section s2 = new Section("Test1", new Paragraph("test"));
+          s2.addTestSubSection();
+          
+          Page p1 = new Page(s1);
+          Page p2 = new Page(s2);
+          p1.addTestParagraphs();
+          p2.addTestParagraphs();
+         
+         assertEquals(p1.hashCode(), p2.hashCode());
+     }
     
 }
