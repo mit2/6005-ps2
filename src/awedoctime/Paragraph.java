@@ -3,6 +3,7 @@ package awedoctime;
 import org.junit.Assert;
 
 /**
+ * Paragraph is immutable.
  * Paragraph is variant of Document ADT.
  * Paragraph is an element of Document witch can contain only text as one single string.
  * @author win8
@@ -66,11 +67,28 @@ public class Paragraph implements Document{
         return content.hashCode();
     }
     
+    /**
+     * Getting paragraphs content.
+     * @return
+     */
+    public String getContent(){
+        return content;
+    }
+    
     // Implement Required Document Interface
+    /**
+     * Returns a document which has the contents of this followed by the
+     * contents of other. Top-level sections in other become top-level sections
+     * in the new document.
+     * @param other document to append
+     * @return concatenation of this and other
+     */
     @Override
     public Document append(Document other) {
         // TODO Auto-generated method stub
-        return null;
+        if(other instanceof Section || other instanceof Page) throw new AssertionError("Append operation fail: trying to contcat different  types");
+        Paragraph p = (Paragraph)other;        
+        return new Paragraph(content + p.getContent()); // As Paragraph is immutable ADT
     }
 
     @Override

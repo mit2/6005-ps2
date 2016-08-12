@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.junit.Assert;
 
 /**
+ * Page is immutable.
  * Page is a variant of Document ADT.
  * Page is a container for paragraphs and sections to be added later.
  * Page is empty if content to be added is null.
@@ -18,7 +19,7 @@ import org.junit.Assert;
  */
 public class Page implements Document{
     // Content of the Page include paragraphs and sections
-    private final ArrayList<Document> content;
+    private final ArrayList<Document> content = new ArrayList<Document>();
     
      // Rep invariant:
      // Page contain zero or more elements.
@@ -29,10 +30,12 @@ public class Page implements Document{
     /** Create Page.
      * @param e is a Document element, required be not null 
      */
-    public Page(Document e){                 // null was an easy option to create an empty Document, but null params is better avoid for NullPointerExeption to be raised.
-        content = new ArrayList<Document>(); // init empty document Page without content.
-        if(!e.toString().contains("Empty document")) content.add(e); // if content don't contain 'empty page' mark, add content to create regular Page.
-        
+    public Page(Document ... elem){                 // null was an easy option to create an empty Document, but null params is better avoid for NullPointerExeption to be raised.     
+           for (Document e : elem) {
+               if(e.toString().contains("Empty")) return; // init empty document Page without content.
+               else content.add(e); 
+           }  
+    
     }
     
     /**
@@ -90,13 +93,61 @@ public class Page implements Document{
         content.add(new Paragraph("Testing2 test test"));
         content.add(new Paragraph("Testing3 test test"));
     }
+    
+    /**
+     * Getting page content.
+     * @return
+     */
+    public ArrayList<Document> getContent(){
+        return (ArrayList<Document>) content.clone();   // returning a shallow copy of 'content'  as Page is immutable ADT
+    }
+    
    
     
     // Implement Required Document Interface
     @Override
     public Document append(Document other) {
-        // TODO Auto-generated method stub
-        return null;
+        // Append other element to the end of this Page. Page behavior similar to Section, just don't have heading.
+        // As always 'smaller elements' was implementing before bigger ones.
+        Section s = new Section("empty", new Paragraph("empty"));
+        
+        
+        if(other instanceof Page){
+            ArrayList<Document> tempContent1; 
+            Page otherPage = (Page)other;
+            if(otherPage.getContent().isEmpty() && this.getContent().isEmpty()) return new Page(new Paragraph("Empty document"));  // return new empty page.
+            else if(otherPage.getContent().isEmpty()){
+                tempContent1 = (ArrayList<Document>) content.clone();
+                return new Page(tempContent1.toArray(new Document[]{})); 
+            }else{
+                tempContent1 = (ArrayList<Document>) content.clone();
+                ArrayList<Document> tempContentOherPage = (ArrayList<Document>) otherPage.getContent().clone();
+                tempContent1.addAll(tempContentOherPage);
+                return new Page(tempContent1.toArray(new Document[]{}));
+            }
+        }else{
+            
+        }
+        
+       
+        // if content of THIS PAGE is empty
+        if(this.getContent().isEmpty()) return new Page(other);
+        
+        
+        
+        // APPEND ONLY PARAGRAPH OR SECTION CODE
+        // if last element in page content is section, recursively find deepest subsection
+        if(content.get(content.size()-1) instanceof Section){
+            s = (Section) content.get(content.size()-1).append(other);            
+        }
+        
+        ArrayList<Document> tempContent2 = (ArrayList<Document>) content.clone();
+        if(s.getContent().size() > 1){  // not 'empty' new subsection
+            tempContent2.remove(tempContent2.size()-1); // remove last elem in content list
+            tempContent2.add(s);
+        }
+        else tempContent2.add(other);        
+        return new Page(tempContent2.toArray(new Document[]{})); // new compound Section
     }
 
     @Override
@@ -134,8 +185,9 @@ public class Page implements Document{
         for (Document e : content) {
            summary = summary.concat(e.toString());          
         }
+        //System.out.println(summary.length());
         if(summary.isEmpty()) System.out.println("Empty Document!");
-        //System.out.println(summary);
+        
         return summary;
     }
 

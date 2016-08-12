@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.junit.Assert;
 
 /**
+ * Section is immutable.
  * Section is variant of Document ADT.
  * Section is element of Document witch can contain any number of Paragraphs and SubSections.
  * NestedSection is a Section created with other Section content.
@@ -27,14 +28,16 @@ public class Section implements Document{
     /**
      * Create Document Section
      * @param title section heading, not empty required
-     * @param e section content as other sections or paragraphs
+     * @param elems section content as other sections or paragraphs
      */
-    public Section(String title, Document e){
+    public Section(String title, Document ... elems){   // adding multiple Document elems thru varargs: 1 or more elems.
         if(title.isEmpty())throw new AssertionError(title);
         header = title;
-        content.add(e);
-        
+        for (Document e : elems) {
+            content.add(e); 
+        }        
     }
+    
     
     // Adding 2 more paragraphs for toString() testing only
     public void addTestParagraphs(){
@@ -47,6 +50,14 @@ public class Section implements Document{
     // Adding 1 SubSection for toString() testing only
     public void addTestSubSection(){
         content.add(new Section("Subsection header", new Paragraph("Testing Subseciton paragraph")));
+    }
+    
+    /**
+     * Getting section's content.
+     * @return
+     */
+    public ArrayList<Document> getContent(){
+        return (ArrayList<Document>) content.clone(); // returning a shallow copy of 'content'  as Section is immutable ADT
     }
     
 
@@ -101,8 +112,22 @@ public class Section implements Document{
     // Implement Required Document Interface
     @Override
     public Document append(Document other) {
-        // TODO Auto-generated method stub
-        return null;
+        // Append other element to the end of this Section.
+        Section s = new Section("empty", new Paragraph("empty"));
+        if(other instanceof Page) throw new AssertionError("Append operation fail: trying to append Page to Section");
+        // if last element in section content is subsection, recursively find deepest subsection
+        if(content.get(content.size()-1) instanceof Section){
+            s = (Section) content.get(content.size()-1).append(other);            
+        }
+        
+        ArrayList<Document> tempContent = (ArrayList<Document>) content.clone();
+        if(s.getContent().size() > 1){  // not 'empty' new subsection
+            tempContent.remove(tempContent.size()-1);
+            tempContent.add(s);
+        }
+        else tempContent.add(other);
+        
+        return new Section(header, tempContent.toArray(new Document[]{})); // new compound Section
     }
 
     @Override
