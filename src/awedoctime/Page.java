@@ -115,39 +115,51 @@ public class Page implements Document{
         if(other instanceof Page){
             ArrayList<Document> tempContent1; 
             Page otherPage = (Page)other;
-            if(otherPage.getContent().isEmpty() && this.getContent().isEmpty()) return new Page(new Paragraph("Empty document"));  // return new empty page.
+            if(otherPage.getContent().isEmpty() && this.getContent().isEmpty())
+                return new Page(new Paragraph("Empty document"));  // return new empty page.
             else if(otherPage.getContent().isEmpty()){
                 tempContent1 = (ArrayList<Document>) content.clone();
                 return new Page(tempContent1.toArray(new Document[]{})); 
             }else{
-                tempContent1 = (ArrayList<Document>) content.clone();
-                ArrayList<Document> tempContentOherPage = (ArrayList<Document>) otherPage.getContent().clone();
-                tempContent1.addAll(tempContentOherPage);
-                return new Page(tempContent1.toArray(new Document[]{}));
+                // if last top-level elem in this PageContent is paragraph
+                if(content.get(content.size()-1) instanceof Paragraph){
+                    tempContent1 = (ArrayList<Document>) content.clone();
+                    ArrayList<Document> tempContentOherPage = (ArrayList<Document>) otherPage.getContent().clone();
+                    tempContent1.addAll(tempContentOherPage);
+                    return new Page(tempContent1.toArray(new Document[]{}));
+                }else{
+                    //if last top-level elem in this PageContent is section
+                    //s = (Section) content.get(content.size()-1).append(other);
+                    //....
+                }
+                
+                
             }
-        }else{
+        }
+        else if(other instanceof Paragraph || other instanceof Section){            
+            // APPEND ONLY PARAGRAPH OR SECTION CODE
+            if(this.getContent().isEmpty()) return new Page(other);                    
+                 
+            // if last element in page content is section, recursively find deepest subsection
+            if(content.get(content.size()-1) instanceof Section){
+                 s = (Section) content.get(content.size()-1).append(other);            
+            }
+                    
+            ArrayList<Document> tempContent2 = (ArrayList<Document>) content.clone();
+            if(s.getContent().size() > 1){  // not 'empty' new subsection
+                tempContent2.remove(tempContent2.size()-1); // remove last elem in content list
+                tempContent2.add(s);
+            }
+            else
+                tempContent2.add(other);        
+            return new Page(tempContent2.toArray(new Document[]{})); // new compound Section 
             
+        }else{
+            System.out.println("OhterType ExeptionErrof!");            
         }
         
-       
-        // if content of THIS PAGE is empty
-        if(this.getContent().isEmpty()) return new Page(other);
+        return null;    // stub
         
-        
-        
-        // APPEND ONLY PARAGRAPH OR SECTION CODE
-        // if last element in page content is section, recursively find deepest subsection
-        if(content.get(content.size()-1) instanceof Section){
-            s = (Section) content.get(content.size()-1).append(other);            
-        }
-        
-        ArrayList<Document> tempContent2 = (ArrayList<Document>) content.clone();
-        if(s.getContent().size() > 1){  // not 'empty' new subsection
-            tempContent2.remove(tempContent2.size()-1); // remove last elem in content list
-            tempContent2.add(s);
-        }
-        else tempContent2.add(other);        
-        return new Page(tempContent2.toArray(new Document[]{})); // new compound Section
     }
 
     @Override
