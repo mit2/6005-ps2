@@ -117,15 +117,15 @@ public class Section implements Document{
         if(other instanceof Page) throw new AssertionError("Append operation fail: trying to append Page to Section");
         // if last element in section content is subsection, recursively find deepest subsection
         if(content.get(content.size()-1) instanceof Section){
-            s = (Section) content.get(content.size()-1).append(other);            
+            s = (Section) this.getContent().get(content.size()-1).append(other);  // get recursive call          
         }
         
         ArrayList<Document> tempContent = (ArrayList<Document>) content.clone();
-        if(s.getContent().size() > 1){  // not 'empty' new subsection
+        if(s.getContent().size() > 1){  // not 'empty' new subsection, returned from recursive call
             tempContent.remove(tempContent.size()-1);
             tempContent.add(s);
         }
-        else tempContent.add(other);
+        else tempContent.add(other);    // if recursive call was didn't used
         
         return new Section(header, tempContent.toArray(new Document[]{})); // new compound Section
     }

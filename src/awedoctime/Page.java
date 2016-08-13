@@ -121,19 +121,34 @@ public class Page implements Document{
                 tempContent1 = (ArrayList<Document>) content.clone();
                 return new Page(tempContent1.toArray(new Document[]{})); 
             }else{
-                // if last top-level elem in this PageContent is paragraph
+                // if last top-level element in this PageContent is paragraph
                 if(content.get(content.size()-1) instanceof Paragraph){
                     tempContent1 = (ArrayList<Document>) content.clone();
                     ArrayList<Document> tempContentOherPage = (ArrayList<Document>) otherPage.getContent().clone();
                     tempContent1.addAll(tempContentOherPage);
                     return new Page(tempContent1.toArray(new Document[]{}));
                 }else{
-                    //if last top-level elem in this PageContent is section
-                    //s = (Section) content.get(content.size()-1).append(other);
-                    //....
-                }
-                
-                
+                    //if last top-level element in this PageContent is section
+                    ArrayList<Document> contentFromOther = otherPage.getContent();
+                    s = (Section) this.getContent().get(content.size()-1);
+                    for (Document e : contentFromOther) {
+                        if(e instanceof Paragraph)
+                            s = (Section) s.append(e);    // append one by one paragraphs to deepest subsection.                        
+                    }
+                    
+                    
+                    ArrayList<Document> tempContent2 = (ArrayList<Document>) content.clone();
+                    if(s.getContent().size() > 1){  // not 'empty' new subsection, returned from recursive call
+                        tempContent2.remove(tempContent2.size()-1); // remove last elem in content list
+                        tempContent2.add(s);
+                        for (Document e : contentFromOther) {   // if OtherPage contain sections to be appended
+                            if(e instanceof Section) tempContent2.add(e);
+                        }
+                    }
+                    
+                    
+                    return new Page(tempContent2.toArray(new Document[]{})); // new compound Section 
+                }                
             }
         }
         else if(other instanceof Paragraph || other instanceof Section){            
@@ -142,16 +157,17 @@ public class Page implements Document{
                  
             // if last element in page content is section, recursively find deepest subsection
             if(content.get(content.size()-1) instanceof Section){
-                 s = (Section) content.get(content.size()-1).append(other);            
+                 s = (Section) this.getContent().get(content.size()-1).append(other);  // clone content from 'this Page' and get recursive call             
             }
                     
             ArrayList<Document> tempContent2 = (ArrayList<Document>) content.clone();
-            if(s.getContent().size() > 1){  // not 'empty' new subsection
+            if(s.getContent().size() > 1){  // not 'empty' new subsection, returned from recursive call
                 tempContent2.remove(tempContent2.size()-1); // remove last elem in content list
                 tempContent2.add(s);
             }
             else
-                tempContent2.add(other);        
+                tempContent2.add(other);    // if recursive call was didn't used  
+            
             return new Page(tempContent2.toArray(new Document[]{})); // new compound Section 
             
         }else{

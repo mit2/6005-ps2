@@ -527,22 +527,29 @@ public class DocumentTest {
       }
       
       // Will append Paragraph to the lowest NestedSection in last Page content element, if it is a section
-      @Test public void testPageWithSectionNestedSectionAppend_PageWithParagraph(){
+      @Test public void testPageWithSectionNestedSectionAppend_PageWithParagraphOrSectionOrBouth(){
           Page p1 = new Page(new Paragraph("Test"));          
           Section sn = new Section("Test1", new Paragraph("test"));
           sn.addTestParagraphs();
           sn.addTestSubSection();
           Page p2 = (Page) p1.append(sn);   // append nestedSection to Page
           
-          Page p = new Page(new Paragraph("Test to deepest subsection")); // error here should be appended pageWithParagraph!, not paragrph
-          Page p3 = (Page) p2.append(p);
-         
-          assertEquals(2, p3.getContent().size());
+          Page pg = new Page(new Paragraph("Test to deepest subsection")); 
+          Section pgs = new Section("Test", new Paragraph("Test"));
+          Page pg2 = (Page) pg.append(pgs);
+          
+          Page p3 = (Page) p2.append(pg2);
+          
+          assertEquals(3, p3.getContent().size());
           // test the order how elems will appear in the new Page
           /// CHECK HOW THIS TEST IS COVERED IN CODE, I MEAN WHITCH BRANCH AND SO ON.
           Section s = (Section) p3.getContent().get(1);     // last elem is section
           Section sub = (Section) s.getContent().get(3); // last elem is section also
-          assertEquals(p.hashCode(), sub.getContent().get(1).hashCode());
+          Paragraph ph = new Paragraph("Test to deepest subsection");
+          assertEquals(ph.hashCode(), sub.getContent().get(1).hashCode());
+          
+          assertEquals(pgs.hashCode(), p3.getContent().get(2).hashCode());    // test if appended top-level section(s)
+          
           
       }
     
