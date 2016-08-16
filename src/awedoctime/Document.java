@@ -43,15 +43,7 @@ public interface Document {
      * <br> - the number of paragraphs in this section, written as
      *        "1 paragraph", or "N paragraphs" for N != 1
      * <br> For an example, see the problem set handout.
-     * @return table of contents
-     * MY NOTE: Ex: 1. Section heading1
-     * 
-     *              1.1 Nested Section heading1.1
-     *                  2 paragraphs
-     *              
-     *              2. Section heading2
-     *                  1 paragraphs
-     *                  
+     * @return table of contents     
      */
     public Document tableOfContents();
     

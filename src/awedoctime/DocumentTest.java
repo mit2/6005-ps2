@@ -548,9 +548,72 @@ public class DocumentTest {
           Paragraph ph = new Paragraph("Test to deepest subsection");
           assertEquals(ph.hashCode(), sub.getContent().get(1).hashCode());
           
-          assertEquals(pgs.hashCode(), p3.getContent().get(2).hashCode());    // test if appended top-level section(s)
-          
-          
+          assertEquals(pgs.hashCode(), p3.getContent().get(2).hashCode());    // test if appended top-level section(s)         
       }
+      
+      // bodyWordCount() tests
+      // PARAGRAPH
+      @Test public void testParagraphBodyWordCount_OneWord(){
+          Paragraph p = new Paragraph("test");
+          assertEquals(1, p.bodyWordCount());
+      }
+      
+      @Test public void testParagraphBodyWordCount_TwoWords(){
+          Paragraph p = new Paragraph("test test");
+          assertEquals(2, p.bodyWordCount());
+      }
+      
+      @Test public void testParagraphBodyWordCount_MultipleWords(){
+          Paragraph p = new Paragraph("test test test aka waka one");
+          assertEquals(6, p.bodyWordCount());
+      }
+      // SECTION
+      @Test public void testSectionBodyWordCount_OneParagraph(){
+          Section s = new Section("test", new Paragraph("test it"));
+          assertEquals(2, s.bodyWordCount());
+      }
+      
+      @Test public void testSectionBodyWordCount_MultipleParagraphs(){
+          Section s = new Section("test", new Paragraph("test it"));
+          s.addTestParagraphs();
+          assertEquals(8, s.bodyWordCount());
+      }
+      
+      @Test public void testSectionBodyWordCount_MultipleParagraphsWithSubsection(){
+          Section s = new Section("test", new Paragraph("test it"));
+          s.addTestParagraphs();
+          s.addTestSubSection();
+          assertEquals(11, s.bodyWordCount());
+      }
+      // PAGE
+      @Test public void testPageBodyWordCount_EmptyPage(){
+          Page p = new Page(new Paragraph("Empty page"));
+          assertEquals(0, p.bodyWordCount());
+      }
+      
+      @Test public void testPageBodyWordCount_OneParagraph(){
+          Page p = new Page(new Paragraph("test it"));
+          assertEquals(2, p.bodyWordCount());
+      }
+      
+      @Test public void testPageBodyWordCount_MultipleParagraphs(){
+          Page p = new Page(new Paragraph("test it."));
+          Page p1 = (Page) p.append(new Paragraph("aka waka."));
+          Page p2 = (Page) p1.append(new Paragraph("aka waka one."));
+          assertEquals(7, p2.bodyWordCount());
+      }
+      
+      @Test public void testPageBodyWordCount_MultipleParagraphsWithSubsection(){
+          Page p = new Page(new Paragraph("test it."));
+          Page p1 = (Page) p.append(new Paragraph("aka waka."));
+          Page p2 = (Page) p1.append(new Paragraph("aka waka one."));
+          
+          Section s = new Section("test", new Paragraph("test it"));
+          s.addTestSubSection();
+          
+          Page p3 = (Page) p2.append(s);
+          assertEquals(12, p3.bodyWordCount());
+      }
+      
     
 }

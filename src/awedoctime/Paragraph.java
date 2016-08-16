@@ -93,14 +93,28 @@ public class Paragraph implements Document{
 
     @Override
     public int bodyWordCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        int state = 0; // 1 is state INWORD, 0 is state OUTWORD
+        int wc = 0; // wordCounter
+        
+        // Algm idea taken from C Language K & R
+        for (int i = 0; i < content.length(); i++) {
+            if(content.charAt(i) == ' ' || content.charAt(0) == '\t'){
+                state = 0;
+            }else if(state == 0){
+                state = 1;               
+                ++wc;
+            }
+        }
+        return wc;
     }
 
     @Override
     public Document tableOfContents() {
-        // TODO Auto-generated method stub
-        return null;
+        // According to specs in Interface for tableOfContents() it "returns Document Page containing one (result) paragraph for
+        // every section heading." Paragraph itself not section. So it should return empty Page, telling that Paragraph has no
+        // section elements in it.
+        System.out.println("Return an Empty Page, b/c Paragraph has no section elements in it.");
+        return new Page(new Paragraph("Empty page"));
     }
 
     @Override

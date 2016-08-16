@@ -132,8 +132,11 @@ public class Section implements Document{
 
     @Override
     public int bodyWordCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        int wc = 0;
+        for (Document e : content) {
+            wc += e.bodyWordCount();    // if e is subSeciton, recursively call itself
+        }
+        return wc;
     }
 
     @Override

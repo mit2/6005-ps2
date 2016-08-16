@@ -32,7 +32,7 @@ public class Page implements Document{
      */
     public Page(Document ... elem){                 // null was an easy option to create an empty Document, but null params is better avoid for NullPointerExeption to be raised.     
            for (Document e : elem) {
-               if(e.toString().contains("Empty")) return; // init empty document Page without content.
+               if(e.toString().toLowerCase().contains("empty")) return; // init empty document Page without content.
                else content.add(e); 
            }  
     
@@ -179,9 +179,13 @@ public class Page implements Document{
     }
 
     @Override
+    // Derived from Section implementation
     public int bodyWordCount() {
-        // TODO Auto-generated method stub
-        return 0;
+        int wc = 0;
+        for (Document e : content) {
+            wc += e.bodyWordCount();    // if e is subSeciton, recursively call itself
+        }
+        return wc;
     }
 
     @Override
