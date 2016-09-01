@@ -1,7 +1,9 @@
 package awedoctime;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import org.hamcrest.core.IsNot;
 import org.junit.Assert;
 
 /**
@@ -59,7 +61,6 @@ public class Section implements Document{
     public ArrayList<Document> getContent(){
         return (ArrayList<Document>) content.clone(); // returning a shallow copy of 'content'  as Section is immutable ADT
     }
-    
 
     /**
      *  Checking Rep Invariant
@@ -115,8 +116,9 @@ public class Section implements Document{
         // Append other element to the end of this Section.
         Section s = new Section("empty", new Paragraph("empty"));
         if(other instanceof Page) throw new AssertionError("Append operation fail: trying to append Page to Section");
-        // if last element in section content is subsection, recursively find deepest subsection
-        if(content.get(content.size()-1) instanceof Section){
+        // if last element in section content is subsection and 1st elem in 'other' is paragraph, recursively find deepest subsection
+        if((content.get(content.size()-1) instanceof Section && other instanceof Paragraph) || 
+                (content.get(content.size()-1) instanceof Section && other instanceof Section && ((Section) other).getContent().get(0) instanceof Paragraph)){           
             s = (Section) this.getContent().get(content.size()-1).append(other);  // get recursive call          
         }
         
@@ -139,10 +141,65 @@ public class Section implements Document{
         return wc;
     }
 
+    /**
+     * Parsing this Section Tree. WRONG ALGORITHMIC SOLUTION
+     * @param snum current section numerical position in Document hierarchy tree
+     * @param list regular list data structure to temporary store parsing results, this time worked if pass-by-reference
+     *//*
+    private void parsSectionTreeOLd(String snum, List<String> list){
+        int sc = 0; // section count
+        int pc = 0; // paragraph count
+        for (Document e : content) {
+            if(e instanceof Paragraph) pc++;
+            else if(e instanceof Section){
+                sc ++;
+                ((Section) e).parsSectionTree(snum + "." + sc, list);
+            }
+        }
+        list.add(snum.concat(". ") + this.header + "  (" + pc + " paragraphs)");
+    }
+    @Override
+    public Document tableOfContentsOLd() {
+        String snum = "0";
+        List list = new ArrayList<String>();
+        this.parsSectionTree(snum, list);
+        
+        Page pg = new Page(new Paragraph("Empty document"));
+        // put backward list's content in normal order
+        for(int i = list.size()-1; i >= 0; i--)
+            pg = (Page) pg.append(new Paragraph((String) list.get(i)));
+    
+        return pg;
+    }*/
+    
+    /**
+     * Parsing this Section Tree.
+     * @param snum current section numerical position in Document hierarchy tree
+     * @param list regular list data structure to temporary store parsing results
+     */
+    private Page parsSectionTree(String snum){
+        int sc = 0; // section count
+        int pc = 0; // paragraph count
+        Page pg = new Page(new Paragraph("Empty document"));
+        
+        for (Document e : content) {
+            if(e instanceof Paragraph) pc++;            
+        }
+        pg = (Page) pg.append(new Paragraph(snum.concat(". ") + this.header + "  (" + pc + " paragraphs)"));
+        
+        for (Document e : content) {            
+            if(e instanceof Section){
+                sc ++;
+                pg = (Page) pg.append(((Section) e).parsSectionTree(snum + "." + sc));
+            }
+        }      
+        return pg;        
+    }
+    
     @Override
     public Document tableOfContents() {
-        // TODO Auto-generated method stub
-        return null;
+        String snum = "0";        
+        return this.parsSectionTree(snum);       
     }
 
     @Override

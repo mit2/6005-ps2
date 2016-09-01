@@ -171,7 +171,7 @@ public class Page implements Document{
             return new Page(tempContent2.toArray(new Document[]{})); // new compound Section 
             
         }else{
-            System.out.println("OhterType ExeptionErrof!");            
+            System.out.println("OthererType ExeptionErrof!");            
         }
         
         return null;    // stub

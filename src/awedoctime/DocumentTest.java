@@ -30,7 +30,8 @@ public class DocumentTest {
     }
     
     @Test public void testBodyWordCountSectionParagraphs() {
-        Document paragraphs = paragraph("Hello, world!").append(paragraph("Goodbye."));
+        Document paragraphs = paragraph("Hello, world! ").append(paragraph("Goodbye."));    // it was hidden bug: after 'world!' missed ' ' to count after append 3 words, not 2.
+        System.out.println(paragraphs.bodyWordCount());
         Document doc = section("Section One", paragraphs);
         assertEquals(3, doc.bodyWordCount());
     }
@@ -324,9 +325,9 @@ public class DocumentTest {
      // append() tests
      // PARAGRAPH
       @Test public void testParagraphAppend_OtherParagraph(){
-          Paragraph p1 = new Paragraph("test1");
+          Paragraph p1 = new Paragraph("test1 ");
           Paragraph p2 = new Paragraph("test2");
-          Paragraph p3 = new Paragraph("test1test2");
+          Paragraph p3 = new Paragraph("test1 test2");
           assertTrue(p3.equals(p1.append(p2)));
       }
       
@@ -349,6 +350,21 @@ public class DocumentTest {
           Section s3 = (Section) s1.append(s2);
           assertTrue(s3.getContent().contains(s2));
           assertEquals(s2.hashCode(), s3.getContent().get(1).hashCode());
+         
+      }
+      
+      @Test public void testSectionAppend_MultipleSections(){
+          // s2 append to s1
+          Section s1 = new Section("Test1", new Paragraph("test"));
+          Section s2 = new Section("Test2", new Paragraph("test2"));
+          Section s3 = new Section("Test3", new Section("Test3", new Paragraph("test3")));
+          
+          Section s5 = (Section) s1.append(s2).append(s3);
+          
+          //System.out.println(s5.getContent().size());
+          //System.out.println(s5.toString());
+          assertEquals(3, s5.getContent().size());
+          assertEquals(s3.hashCode(), s5.getContent().get(2).hashCode());
          
       }
       
@@ -614,6 +630,61 @@ public class DocumentTest {
           Page p3 = (Page) p2.append(s);
           assertEquals(12, p3.bodyWordCount());
       }
+      
+      // tableOfContents() tests
+      // PARAGRAPH do not needed tests
+      // SECTION
+      @Test public void testSectionTableOfContent_MultipleParagraphs(){
+          Section s = new Section("Header", new Paragraph("test it"));
+          s.addTestParagraphs();
+          Page pg = (Page) s.tableOfContents();
+          System.out.println(pg.toString());
+          
+          assertEquals(1, pg.getContent().size());
+          Paragraph p1 = (Paragraph) pg.getContent().get(0);
+          assertTrue(p1.getContent().contains("3")); // 3 paragraphs found
+      }
+      
+      @Test public void testSectionTableOfContent_WithSubSection(){
+          Section s = new Section("Header", new Paragraph("test it"));
+          s.addTestParagraphs();
+          s.addTestSubSection();
+          Page pg = (Page) s.tableOfContents();
+          System.out.println(pg.toString());
+          
+          assertEquals(2, pg.getContent().size());
+          Paragraph p1 = (Paragraph) pg.getContent().get(1);
+          assertTrue(p1.getContent().contains("1")); // 1 paragraphs found
+      }
+      
+      @Test public void testSectionTableOfContent_WithSubSubSection(){ 
+          // best way to test  table of content to create nested section content not useing append(), as it will nest S(P) to deepest S(PPS(S))          
+          Section subSub = new Section("Sec1-Header", new Paragraph("test1"));
+          subSub.addTestSubSection();
+          Section multiLevelNestedSec = new Section("TopHeader", new Paragraph("test it"), subSub, new Section("Sec2-Header", new Paragraph("test")));
+          
+          // multiLevelNestedSec Tree
+          /*S
+             -p             
+             -1S
+               -p
+               -S
+                 -p
+             -2S
+               -p
+                
+          */
+          
+          
+          Page pg = (Page) multiLevelNestedSec.tableOfContents();
+          System.out.println("TEST" + pg.toString());
+          
+          assertEquals(4, pg.getContent().size());
+          Paragraph p1 = (Paragraph) pg.getContent().get(2);
+          assertTrue(p1.getContent().contains("0.1.1")); // Deepest SubSection number in hierarchy          
+      }
+      
+      
       
     
 }
