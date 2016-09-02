@@ -192,7 +192,8 @@ public class Section implements Document{
                 sc ++;
                 pg = (Page) pg.append(((Section) e).parsSectionTree(snum + "." + sc));
             }
-        }      
+        }
+        // Remove all 0. from parag string...
         return pg;        
     }
     

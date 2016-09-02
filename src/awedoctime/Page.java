@@ -187,11 +187,37 @@ public class Page implements Document{
         }
         return wc;
     }
-
+ 
     @Override
+    // Derived from Section implementation
     public Document tableOfContents() {
-        // TODO Auto-generated method stub
-        return null;
+        int sc = 0; // section count number
+        int pc = 0; // paragraph count number
+        Page pg = new Page(new Paragraph("Empty document"));
+        Page pg2 = new Page(new Paragraph("Empty document"));
+        
+        for (Document e : content) {
+            if(e instanceof Paragraph) pc++;            
+        }
+        pg = (Page) pg.append(new Paragraph("Page TopLevel:  (" + pc + " paragraphs)"));
+        
+        for (Document e : content) {            
+            if(e instanceof Section){
+                sc ++;
+                Page pageSec = (Page) e.tableOfContents(); // the easiest way to pass as param secNum to tableOfContents(), but its forbidden to change method signature by Plm specs
+                                                            // BELLOW IS SOLUTION TO SOLVE IT
+                //Replace all "0." for "sc." in paragraphs string...                
+                for (Document elem : pageSec.getContent()) {
+                    String s = ((Paragraph) elem).getContent(); // cast e to get it content, otherwise not compiler not allowed
+                    //replace str
+                    s = s.replaceFirst("0.", sc+".");
+                    pg2 = (Page) pg2.append(new Paragraph(s));
+                }
+                
+            }
+        }
+        
+        return (Page) pg.append(pg2);           
     }
 
     @Override

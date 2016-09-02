@@ -633,6 +633,7 @@ public class DocumentTest {
       
       // tableOfContents() tests
       // PARAGRAPH do not needed tests
+      
       // SECTION
       @Test public void testSectionTableOfContent_MultipleParagraphs(){
           Section s = new Section("Header", new Paragraph("test it"));
@@ -677,12 +678,81 @@ public class DocumentTest {
           
           
           Page pg = (Page) multiLevelNestedSec.tableOfContents();
-          System.out.println("TEST" + pg.toString());
+          System.out.println(pg.toString());
           
           assertEquals(4, pg.getContent().size());
           Paragraph p1 = (Paragraph) pg.getContent().get(2);
           assertTrue(p1.getContent().contains("0.1.1")); // Deepest SubSection number in hierarchy          
       }
+      // PAGE
+      @Test public void testPageTableOfContent_Empty(){
+          Page p = new Page(new Paragraph("Empty document."));
+          Page pg = (Page) p.tableOfContents();
+          System.out.println(pg);
+          
+          assertEquals(1, pg.getContent().size());
+          Paragraph p1 = (Paragraph) pg.getContent().get(0);
+          assertTrue(p1.getContent().contains("0 paragraphs")); // 0 paragraphs found
+      }
+      
+      @Test public void testPageTableOfContent_MultipleParagraphs(){
+          Page p = new Page(new Paragraph("test it."));
+          Page p1 = (Page) p.append(new Paragraph("aka waka."));
+          Page p2 = (Page) p1.append(new Paragraph("aka waka one."));
+          Page pg = (Page) p2.tableOfContents();
+          System.out.println(pg);
+          
+          assertEquals(1, pg.getContent().size());
+          Paragraph ph = (Paragraph) pg.getContent().get(0);
+          assertTrue(ph.getContent().contains("3 paragraphs")); // 3 paragraphs found
+      }
+      
+      @Test public void testPageTableOfContent_WithSubSection(){
+          Page p = new Page(new Paragraph("Test page"));
+          Section s = new Section("Sec1-Header", new Paragraph("test it"));
+          s.addTestParagraphs();
+          s.addTestSubSection();
+          
+          p = (Page) p.append(s);
+          Page pg = (Page) p.tableOfContents();
+          System.out.println(pg);
+          
+          assertEquals(3, pg.getContent().size());
+          Paragraph p1 = (Paragraph) pg.getContent().get(2);
+          assertTrue(p1.getContent().contains("1 paragraphs")); // 1 paragraphs found
+          
+      }
+      
+      @Test public void testPageTableOfContent_WithSubSubSection(){ 
+          // best way to test  table of content to create nested section content not useing append(), as it will nest S(P) to deepest S(PPS(S))          
+          Section subSub = new Section("Sec1-Header", new Paragraph("test1"));
+          subSub.addTestSubSection();
+          Page multiLevelNestedPage = new Page(new Paragraph("test it"), subSub, new Section("Sec2-Header", new Paragraph("test2")), new Section("Sec3-Header", new Paragraph("test3")));
+          
+          
+          // multiLevelNestedPage Tree
+          /*P
+             -p             
+             -1S
+               -p
+               -S
+                 -p
+             -2S
+               -p
+             -3S
+               -p
+                
+          */
+          
+          
+          Page pg = (Page) multiLevelNestedPage.tableOfContents();
+          System.out.println(pg.toString());
+          
+          assertEquals(5, pg.getContent().size());
+          Paragraph p1 = (Paragraph) pg.getContent().get(2);
+          assertTrue(p1.getContent().contains("1.1.")); // Deepest SubSection number in hierarchy          
+      }
+      
       
       
       

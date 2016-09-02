@@ -135,7 +135,7 @@ public class Paragraph implements Document{
      */
     @Override public String toString(){
         if(!content.isEmpty())
-            return content.substring(0, content.length()/2) + "...\n";
+            return content.substring(0, content.length()/2) + "...\n"; // /2 gives half of content
         else
             return content;
     }
