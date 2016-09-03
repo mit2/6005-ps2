@@ -203,9 +203,49 @@ public class Section implements Document{
         return this.parsSectionTree(snum);       
     }
 
+    /**
+     * Latex Document representation: Parsing this Section Tree
+     * @param snum current section numerical position in Document hierarchy tree
+     * @param list regular list data structure to temporary store parsing results
+     */
+    private String parsSectionTreeLatex(String snum){
+        int sc = 0; // section count    
+        String[] secDepthLevel = {"\\section", "\\subsection", "\\subsubsection"};  
+        String latexRep = secDepthLevel[snum.length() - 1] + "{" + this.header + "}\n\n";
+                            
+        
+        for (Document e : content) {
+            if(e instanceof Paragraph) latexRep = latexRep + ((Paragraph) e).getContent() + "\n\n"; // add  latexSpeciaCharsHandling()         
+        }
+        
+        for (Document e : content) {            
+            if(e instanceof Section){
+                sc ++;
+               
+                latexRep = latexRep.concat(((Section) e).parsSectionTreeLatex(snum + sc));
+            }
+        }
+        
+        return latexRep ;        
+    }
+    
     @Override
     public String toLaTeX() throws ConversionException {
         // TODO Auto-generated method stub
+        String snum = "0"; 
+        String latexRepStart = "\\documentclass{article}\n\n\\begin{document}\n\n";
+        String latexRepEnd = "\\end{document}";        
+        return latexRepStart + this.parsSectionTreeLatex(snum) + latexRepEnd;
+    }
+    
+    /**
+     * Whenever you put one of these special characters into your file, you are doing something special, as described below.
+     *   If you simply want the character to be printed just as any other letter, include a \ in front of the character. 
+     *   For example, \$ will produce $ in your output. (...)
+     * @return
+     */
+    // Didn't do special char handling, as it's easy, just pars Paragraphs string and add in-front off specialChars backslash "\"
+    public  String latexSpeciaCharsHandling(){
         return null;
     }
 
