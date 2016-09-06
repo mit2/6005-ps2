@@ -245,7 +245,7 @@ public class Section implements Document{
      * @return
      */
     // Didn't do special char handling, as it's easy, just pars Paragraphs string and add in-front off specialChars backslash "\"
-    public  String latexSpeciaCharsHandling(){
+    public  String latexSpecialCharsHandling(){
         return null;
     }
 

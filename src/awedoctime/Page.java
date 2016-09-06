@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import org.junit.Assert;
 
+import awedoctime.Document.ConversionException;
+
 /**
  * Page is immutable.
  * Page is a variant of Document ADT.
@@ -220,11 +222,31 @@ public class Page implements Document{
         return (Page) pg.append(pg2);           
     }
 
-    @Override
-    public String toLaTeX() throws ConversionException {
-        // TODO Auto-generated method stub
-        return null;
-    }
+
+   @Override
+   public String toLaTeX() throws ConversionException {
+       // TODO Auto-generated method stub
+       String snum = "0"; 
+       String latexRepStart = "\\documentclass{article}\n\n\\begin{document}\n\n";
+       String latexRepEnd = "\\end{document}"; 
+       String latexRep = "";
+
+       for (Document e : content) {
+           if(e instanceof Paragraph) latexRep = latexRep + ((Paragraph) e).getContent() + "\n\n"; // add  latexSpeciaCharsHandling()         
+       }
+       
+       for (Document e : content) {            
+           if(e instanceof Section){                  
+               String secLatexRep = ((Section) e).toLaTeX();
+               // remove latexRepStart, latexRepEnd as it is will be duplicated in result output               
+               secLatexRep = secLatexRep.substring(latexRepStart.length());
+               secLatexRep = secLatexRep.substring(0, secLatexRep.length()-latexRepEnd.length());
+               
+               latexRep = latexRep.concat(secLatexRep);    
+           }
+       }      
+       return latexRepStart + latexRep + latexRepEnd;
+   }
 
     @Override
     public String toMarkdown() throws ConversionException {

@@ -810,7 +810,7 @@ public class DocumentTest {
                      + "Testing Subseciton paragraph\n\n"
 
                      + "\\end{document}";
-          assertEquals(s2, s.toLaTeX()); // 3 paragraphs found        
+          assertEquals(s2, s.toLaTeX());       
       }
       
       @Test public void testSectionToLatex_WithSubSubSection() throws ConversionException{ // 3 Level Section
@@ -847,7 +847,121 @@ public class DocumentTest {
                      + "Testing2 test test\n\n"
 
                      + "\\end{document}";
-          assertEquals(str, s.toLaTeX()); // 3 paragraphs found         
+          assertEquals(str, s.toLaTeX());        
+      }
+      
+   // PAGE
+      @Test public void testPageToLatex_Empty() throws ConversionException{
+          Page p = new Page(new Paragraph("Empty document")); 
+          try {
+              System.out.println(p.toLaTeX());
+          } catch (ConversionException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+          }
+          String s2 = "\\documentclass{article}\n\n"
+
+                     + "\\begin{document}\n\n"
+                     
+                     + "\\end{document}";
+          assertEquals(s2, p.toLaTeX());  
+      }
+      
+      @Test public void testPageToLatex_OnlyParagraphs() throws ConversionException{
+          Page p = new Page(new Paragraph("Testing1 test test"), new Paragraph("Testing2 test test"),new Paragraph("Testing3 test test"));
+          
+          try {
+            System.out.println(p.toLaTeX());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String s2 = "\\documentclass{article}\n\n"
+
+                     + "\\begin{document}\n\n"                                        
+
+                     + "Testing1 test test\n\n"
+
+                     + "Testing2 test test\n\n"
+
+                     + "Testing3 test test\n\n"
+
+                     + "\\end{document}";
+          assertEquals(s2, p.toLaTeX()); // 3 paragraphs found         
+      }
+      
+      @Test public void testPageToLatex_WithSubSection() throws ConversionException{ // 2 Level Section          
+          Page p = new Page(new Paragraph("Empty document")); 
+          Section s = new Section("Header", new Paragraph("Testing1 test test"));
+          s.addTestSubSection();
+          p = (Page) p.append(s);
+          
+          try {
+            System.out.println(p.toLaTeX());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String s2 = "\\documentclass{article}\n\n"
+
+                     + "\\begin{document}\n\n"
+
+                     + "\\section{Header}\n\n"
+                     
+                     + "Testing1 test test\n\n"
+
+                     + "\\subsection{Subsection header}\n\n"
+
+                     + "Testing Subseciton paragraph\n\n"
+
+                     + "\\end{document}";
+          assertEquals(s2, p.toLaTeX());         
+      }
+      
+      @Test public void testPageToLatex_WithSubSubSection() throws ConversionException{ // 3 Level Section
+          
+          Section s1 = new Section("SubHeader1", new Paragraph("Testing1 test test"));
+          s1.addTestSubSection();
+          Section s2 = new Section("SubHeader2", new Paragraph("Testing2 test test"));
+          Section s = new Section("Header1", new Paragraph("Testing0 test test"), s1, s2);
+          
+          Page p = new Page(s, new Section("Header2", new Paragraph("Testing0 test test")));
+         
+          try {
+            System.out.println(p.toLaTeX());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String str = "\\documentclass{article}\n\n"
+
+                     + "\\begin{document}\n\n"
+
+                     + "\\section{Header1}\n\n"
+                     
+                     + "Testing0 test test\n\n"
+                     
+                     + "\\subsection{SubHeader1}\n\n"
+
+                     + "Testing1 test test\n\n"
+
+                     + "\\subsubsection{Subsection header}\n\n"
+
+                     + "Testing Subseciton paragraph\n\n"
+                     
+                     + "\\subsection{SubHeader2}\n\n"
+                     
+                     + "Testing2 test test\n\n"
+                     
+                     + "\\section{Header2}\n\n"
+                     
+                     + "Testing0 test test\n\n"
+
+                     + "\\end{document}";
+          assertEquals(str, p.toLaTeX());         
       }
       
       
