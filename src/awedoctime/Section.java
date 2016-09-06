@@ -206,7 +206,6 @@ public class Section implements Document{
     /**
      * Latex Document representation: Parsing this Section Tree
      * @param snum current section numerical position in Document hierarchy tree
-     * @param list regular list data structure to temporary store parsing results
      */
     private String parsSectionTreeLatex(String snum){
         int sc = 0; // section count    
@@ -249,10 +248,34 @@ public class Section implements Document{
         return null;
     }
 
+    /**
+     * Markdown Document representation: Parsing this Section Tree
+     * @param snum current section numerical position in Document hierarchy tree
+     */
+    private String parsSectionTreeMarkdown(String snum){
+        int sc = 0; // section count    
+        String[] secDepthLevel = {"#", "##", "###"};  
+        String markdownRep = secDepthLevel[snum.length() - 1] + " " + this.header + "\n\n";
+        
+        for (Document e : content) {
+            if(e instanceof Paragraph) markdownRep = markdownRep + ((Paragraph) e).getContent() + "\n\n"; // add  latexSpeciaCharsHandling()         
+        }
+        
+        for (Document e : content) {            
+            if(e instanceof Section){
+                sc ++;               
+                markdownRep = markdownRep.concat(((Section) e).parsSectionTreeMarkdown(snum + sc));
+            }
+        }
+        
+        return markdownRep ;        
+    }
+    
     @Override
     public String toMarkdown() throws ConversionException {
         // TODO Auto-generated method stub
-        return null;
+        String snum = "0";
+        return this.parsSectionTreeMarkdown(snum);
     }
     
     /**

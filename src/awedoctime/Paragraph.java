@@ -72,7 +72,7 @@ public class Paragraph implements Document{
      * @return
      */
     public String getContent(){
-        return content;
+        return content.substring(0);
     }
     
     // Implement Required Document Interface
@@ -131,7 +131,7 @@ public class Paragraph implements Document{
     @Override
     public String toMarkdown() throws ConversionException {
         // TODO Auto-generated method stub
-        return null;
+        return this.getContent(); //markdownSpeciaCharsHandling()         
     }
     
     /**

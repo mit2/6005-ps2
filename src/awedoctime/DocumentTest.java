@@ -964,7 +964,179 @@ public class DocumentTest {
           assertEquals(str, p.toLaTeX());         
       }
       
+      // toMarkdown() tests
+      // PARAGRAPH will do later (easy)
       
+      // SECTION
+      @Test public void testSectionToMarkdown_OnlyParagraphs() throws ConversionException{
+          Section s = new Section("Header", new Paragraph("Testing1 test test"));
+          s.addTestParagraphs();
+          
+          try {
+            System.out.println(s.toMarkdown());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String s2 = "# Header\n\n"                   
+
+                     + "Testing1 test test\n\n"
+
+                     + "Testing2 test test\n\n"
+
+                     + "Testing3 test test\n\n";
+
+          assertEquals(s2, s.toMarkdown()); // 3 paragraphs found         
+      }
       
-    
+      @Test public void testSectionToMarkdown_WithSubSection() throws ConversionException{ // 2 Level Section
+          Section s = new Section("Header", new Paragraph("Testing1 test test"));
+          s.addTestSubSection();
+          
+          try {
+            System.out.println(s.toMarkdown());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String s2 = "# Header\n\n"
+
+                     + "Testing1 test test\n\n"
+
+                     + "## Subsection header\n\n"
+
+                     + "Testing Subseciton paragraph\n\n";
+
+          assertEquals(s2, s.toMarkdown());       
+      }
+      
+      @Test public void testSectionToMarkdown_WithSubSubSection() throws ConversionException{ // 3 Level Section
+          Section s1 = new Section("SubHeader1", new Paragraph("Testing1 test test"));
+          s1.addTestSubSection();
+          Section s2 = new Section("SubHeader2", new Paragraph("Testing2 test test"));
+          Section s = new Section("Header", new Paragraph("Testing0 test test"), s1, s2);
+         
+          try {
+            System.out.println(s.toMarkdown());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String str = "# Header\n\n"                     
+                     
+                     + "Testing0 test test\n\n"
+                     
+                     + "## SubHeader1\n\n"
+
+                     + "Testing1 test test\n\n"
+
+                     + "### Subsection header\n\n"
+
+                     + "Testing Subseciton paragraph\n\n"
+                     
+                     + "## SubHeader2\n\n"
+                     
+                     + "Testing2 test test\n\n";
+
+          assertEquals(str, s.toMarkdown());        
+      }
+      
+   // PAGE
+      @Test public void testPageToMarkdown_Empty() throws ConversionException{
+          Page p = new Page(new Paragraph("Empty document")); 
+          try {
+              System.out.println(p.toMarkdown());
+          } catch (ConversionException e) {
+              // TODO Auto-generated catch block
+              e.printStackTrace();
+          }
+          String s2 = "";
+          assertEquals(s2, p.toMarkdown());  
+      }
+      
+      @Test public void testPageToMarkdown_OnlyParagraphs() throws ConversionException{
+          Page p = new Page(new Paragraph("Testing1 test test"), new Paragraph("Testing2 test test"),new Paragraph("Testing3 test test"));
+          
+          try {
+            System.out.println(p.toMarkdown());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String s2 = "Testing1 test test\n\n"                     
+
+                     + "Testing2 test test\n\n"
+
+                     + "Testing3 test test\n\n";
+
+          assertEquals(s2, p.toMarkdown()); // 3 paragraphs found         
+      }
+      
+      @Test public void testPageToMarkdown_WithSubSection() throws ConversionException{ // 2 Level Section          
+          Page p = new Page(new Paragraph("Empty document")); 
+          Section s = new Section("Header", new Paragraph("Testing1 test test"));
+          s.addTestSubSection();
+          p = (Page) p.append(s);
+          
+          try {
+            System.out.println(p.toMarkdown());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String s2 = "# Header\n\n"
+
+                     + "Testing1 test test\n\n"
+
+                     + "## Subsection header\n\n"
+
+                     + "Testing Subseciton paragraph\n\n";
+
+          assertEquals(s2, p.toMarkdown());         
+      }
+      
+      @Test public void testPageToMarkdown_WithSubSubSection() throws ConversionException{ // 3 Level Section
+          
+          Section s1 = new Section("SubHeader1", new Paragraph("Testing1 test test"));
+          s1.addTestSubSection();
+          Section s2 = new Section("SubHeader2", new Paragraph("Testing2 test test"));
+          Section s = new Section("Header1", new Paragraph("Testing0 test test"), s1, s2);
+          
+          Page p = new Page(s, new Section("Header2", new Paragraph("Testing0 test test")));
+         
+          try {
+            System.out.println(p.toMarkdown());
+        } catch (ConversionException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+          
+         String str = "# Header1\n\n"
+
+                     + "Testing0 test test\n\n"
+                     
+                     + "## SubHeader1\n\n"
+
+                     + "Testing1 test test\n\n"
+
+                     + "### Subsection header\n\n"
+
+                     + "Testing Subseciton paragraph\n\n"
+                     
+                     + "## SubHeader2\n\n"
+                     
+                     + "Testing2 test test\n\n"
+                     
+                     + "# Header2\n\n"
+                     
+                     + "Testing0 test test\n\n";
+
+          assertEquals(str, p.toMarkdown());         
+      }
+      
 }

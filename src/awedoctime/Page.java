@@ -173,7 +173,7 @@ public class Page implements Document{
             return new Page(tempContent2.toArray(new Document[]{})); // new compound Section 
             
         }else{
-            System.out.println("OthererType ExeptionErrof!");            
+            System.out.println("OtherType ExeptionError!");            
         }
         
         return null;    // stub
@@ -250,8 +250,21 @@ public class Page implements Document{
 
     @Override
     public String toMarkdown() throws ConversionException {
-        // TODO Auto-generated method stub
-        return null;
+     // TODO Auto-generated method stub        
+        String markdownRep = "";
+
+        for (Document e : content) {
+            if(e instanceof Paragraph) markdownRep = markdownRep + ((Paragraph) e).getContent() + "\n\n"; // add  markdownSpeciaCharsHandling()         
+        }
+        
+        for (Document e : content) {            
+            if(e instanceof Section){                  
+                String secLatexRep = ((Section) e).toMarkdown();                
+                markdownRep = markdownRep.concat(secLatexRep);    
+            }
+        }
+        
+        return markdownRep;       
     }
     
     /**
