@@ -118,9 +118,14 @@ public class Paragraph implements Document{
     }
 
     @Override
-    public String toLaTeX() throws ConversionException {
-        // TODO Auto-generated method stub
-        return null;
+    public String toLaTeX() throws ConversionException {        
+        String latexRepStart = "\\documentclass{article}\n\n\\begin{document}\n\n";
+        String latexRepEnd = "\\end{document}"; 
+        String latexRep = "";
+
+        latexRep = latexRep + this.getContent() + "\n\n"; // add  latexSpeciaCharsHandling()         
+       
+        return latexRepStart + latexRep + latexRepEnd;
     }
 
     @Override
